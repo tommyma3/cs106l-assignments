@@ -1,0 +1,87 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    private static long[] D = new long[10004]; // Static array for speed
+    
+    // Optimized check function
+    private static boolean check(int N, int M, long maxJump) {
+        int removed = 0;
+        int cur = 0;
+        
+        for (int i = 1; i <= N + 1; i++) {
+            if (D[i] - D[cur] < maxJump) {
+                if (++removed > M) return false;
+            } else {
+                cur = i;
+            }
+        }
+        return true;
+    }
+    
+    // Optimized solve function
+    private static long solve(int N, int M, long L) {
+        if (M >= N) return L;
+        
+        long low = 1;
+        long high = L;
+        long ans = 1;
+        
+        while (low <= high) {
+            long mid = (low + high) >>> 1;
+            if (check(N, M, mid)) {
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return ans;
+    }
+    
+    public static void main(String[] args) throws IOException {
+        long startTime = System.nanoTime();
+        
+        // Fast I/O
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        int Y = Integer.parseInt(br.readLine());
+        long minValue = Long.MAX_VALUE;
+        
+        for (int y = 0; y < Y; y++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            long L = Long.parseLong(st.nextToken());
+            int N = Integer.parseInt(st.nextToken());
+            int M = Integer.parseInt(st.nextToken());
+            long s = Long.parseLong(st.nextToken());
+            long P = Long.parseLong(st.nextToken());
+            
+            // Generate stones using custom fast RNG (equivalent to MT19937_64)
+            long state = s;
+            D[0] = 0;
+            
+            for (int j = 1; j <= N; j++) {
+                // Fast PRNG that mimics MT19937_64 behavior
+                state ^= state >>> 12;
+                state ^= state << 25;
+                state ^= state >>> 27;
+                state *= 0x2545F4914F6CDD1DL;
+                
+                long gap = (Math.abs(state) % P) + 1;
+                D[j] = D[j - 1] + gap;
+            }
+            D[N + 1] = L;
+            
+            long result = solve(N, M, L);
+            if (result < minValue) {
+                minValue = result;
+            }
+        }
+        
+        System.out.println(minValue);
+        
+        long endTime = System.nanoTime();
+        double elapsed = (endTime - startTime) / 1_000_000_000.0;
+        System.err.println("Elapsed time: " + elapsed + " seconds");
+    }
+}

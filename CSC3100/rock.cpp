@@ -2,15 +2,16 @@
 #include <vector>
 #include <random>
 #include <climits>
+#include <chrono>
 using namespace std;
 using i64 = long long;
 
 
-static bool check(const vector<long long>& D, int M, long long maxJump) {
+bool check(const vector<long long>& D, int M, long long maxJump) {
     int removed = 0;
-    size_t cur = 0;
-    size_t sz = D.size();
-    for (size_t i = 1; i < sz; ++i) {
+    int cur = 0;
+    int sz = D.size();
+    for (int i = 1; i < sz; ++i) {
         if (D[i] - D[cur] < maxJump) {
             if (++removed > M) return false;
         } else {
@@ -22,13 +23,14 @@ static bool check(const vector<long long>& D, int M, long long maxJump) {
 
 
 long long solve(const vector<long long>& D, int M, long long L) {
-    long long low = 0, high = 0;
-    for (size_t i = 1; i < D.size(); ++i) {
-        high = max(high, D[i] - D[i - 1]);
-    }
-    long long ans = high;
+    long long low = 1;
+    long long high = L;
+
+    if (M >= (int)D.size() - 2) return L;
+
+    long long ans = 0;
     while (low <= high) {
-        long long mid = (low + high) / 2;
+        long long mid = (low + high) >> 1;
         if (check(D, M, mid)) {
             ans = mid;
             low = mid + 1;
@@ -41,24 +43,32 @@ long long solve(const vector<long long>& D, int M, long long L) {
 
 
 int main() {
+    auto start = chrono::high_resolution_clock::now();
+
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    cout.tie(nullptr);
 
     int Y;
     if (!(cin >> Y)) return 0;
 
     long long minValue = LLONG_MAX;
 
+    vector<long long> D;
+    D.reserve(10002);
+
     for (int y = 0; y < Y; ++y) {
         long long L; int N, M; long long s, P;
         cin >> L >> N >> M >> s >> P;
 
+        D.clear();
+        D.resize(N + 2);
+
         // Generate D[1..N] via MT19937_64(seed=s)
         std::mt19937_64 rng((unsigned long long)s);
-        vector<long long> D((size_t)N + 2, 0); // 1-based, D[0] = 0
         for (int j = 1; j <= N; ++j) {
             long long gap = (rng() % P) + 1ULL;
-            D[j] = D[j- 1] + (long long)gap;
+            D[j] = D[j - 1] + (long long)gap;
         }
         D[N + 1] = L;
         // Guaranteed: 0 < D[1] < ... < D[N] < L
@@ -67,7 +77,11 @@ int main() {
 
     }
 
-    cout << minValue << '\n';
+    printf("%lld\n", minValue);
+
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = end - start;
+    cerr << "Elapsed time: " << elapsed.count() << " seconds\n";
 
     return 0;
 }
