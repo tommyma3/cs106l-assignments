@@ -13,9 +13,8 @@
 #include <set>
 #include <string>
 #include <unordered_set>
-#include <random>
 
-std::string kYourName = "Tommy Ma"; // Don't forget to change this!
+std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -30,17 +29,6 @@ std::string kYourName = "Tommy Ma"; // Don't forget to change this!
  */
 std::set<std::string> get_applicants(std::string filename) {
   // STUDENT TODO: Implement this function.
-  
-  std::set<std::string> applicants;
-  std::fstream fst(filename);
-  if (fst.is_open()) {
-    std::string line;
-    while(getline(fst, line)) {
-      applicants.insert(line);
-    }
-  }
-  fst.close();
-  return applicants;
 }
 
 /**
@@ -53,14 +41,6 @@ std::set<std::string> get_applicants(std::string filename) {
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
   // STUDENT TODO: Implement this function.
-  
-  std::queue<const std::string*> matches;
-  for (const auto& student : students) {
-    if (student[0] == name[0] && student[student.find(' ') + 1] == name[name.find(' ') + 1]) {
-      matches.push(&student);
-    }
-  }
-  return matches;
 }
 
 /**
@@ -75,22 +55,7 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  */
 std::string get_match(std::queue<const std::string*>& matches) {
   // STUDENT TODO: Implement this function.
-  if (matches.empty()) {
-    return "NO MATCHES FOUND.";
-  }
-  else {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(0, matches.size() - 1);
-    int index = distr(gen);
-    for (int i = 0; i < index; i++) {
-      matches.pop();
-    }
-    std::string match = *(matches.front());
-    return match;
-  }
 }
 
 /* #### Please don't remove this line! #### */
 #include "autograder/utils.hpp"
-
