@@ -20,19 +20,16 @@ public:
    * Your custom operators and special member functions will go here!
    */
 
-  friend std::ostream& operator <<(std::ostream& os, const User& user);
+  friend std::ostream& operator<<(std::ostream&, const User& user);
 
   ~User();
-  User(const User& other);
-  User& operator=(const User& other);
-  User(User&& other) = delete;
-  User& operator=(User&& other) = delete;
+  User(const User& user);
+  User& operator=(const User& user);
+  User(User&& user) = delete;
+  User& operator=(User&& user) = delete;
 
   User& operator+=(User& other);
-
-  bool operator<(const User& other) const {
-    return this->_name < other._name;
-  }
+  bool operator<(const User& other) const;
 
 
 private:

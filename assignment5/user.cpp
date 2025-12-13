@@ -64,51 +64,48 @@ void User::set_friend(size_t index, const std::string& name)
  * The definitions for your custom operators and special member functions will go here!
  */
 
-
-std::ostream& operator <<(std::ostream& os, const User& user) {
-    os << "User(name=" << user._name << ", friends=[";
-    for (size_t i = 0; i < user.size(); ++i) {
-        os << user._friends[i];
-        if (i < user.size() - 1) {
-            os << ", ";
-        }
-    }
-    os << "])";
-    return os;
- }
+std::ostream& operator<<(std::ostream& ost, const User& user) {
+  ost << "User(name=" << user.get_name() << ", friends=[";
+  for (size_t i = 0; i < user.size(); ++i) {
+    if (i > 0) ost << ", ";
+    ost << user._friends[i];
+  }
+  ost << "])";
+  return ost;
+}
 
 User::~User() {
-    delete[] _friends;
-  }
+  delete[] _friends;
+}
 
-User::User(const User& other)
-  : _name(other._name)
-  , _friends(new std::string[other._capacity]) 
-  , _size(other._size)
-  , _capacity(other._capacity)
-{
-    for (size_t i = 0; i < other._size; ++i) {
-        _friends[i] = other._friends[i];
-    }
-  }
+User::User(const User& user) : _name(user._name), _friends(new std::string[user._capacity]), _size(user._size), _capacity(user._capacity) {
+  std::copy(user._friends, user._friends + user.size(), this->_friends);
+}
 
-User& User::operator=(const User& other) {
-    if (this != &other) {
-        delete[] _friends; // Free existing resource
-
-        _name = other._name;
-        _capacity = other._capacity;
-        _size = other._size;
-        _friends = new std::string[_capacity];
-        for (size_t i = 0; i < other._size; ++i) {
-            _friends[i] = other._friends[i];
-        }
-    }
+User& User::operator=(const User& user) {
+  if (this == &user) {
     return *this;
   }
 
-  User& User::operator+=(User& other) {
-    this->add_friend(other.get_name());
-    other.add_friend(this->_name);
-    return *this;
-  }
+  delete[] _friends;
+
+  _name = user._name;
+  _size = user._size;
+  _capacity = user._capacity;
+  _friends = new std::string[_capacity];
+
+  std::copy(user._friends, user._friends + user.size(), this->_friends);
+
+  return *this;
+}
+
+User& User::operator+=(User& other) {
+  add_friend(other.get_name());
+  other.add_friend(this->_name);
+
+  return *this;
+}
+
+bool User::operator<(const User& other) const {
+  return get_name() < other.get_name();
+}
