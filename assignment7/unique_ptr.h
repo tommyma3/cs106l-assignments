@@ -13,9 +13,7 @@ namespace cs106l {
 template <typename T> class unique_ptr {
 private:
   /* STUDENT TODO: What data must a unique_ptr keep track of? */
-  T* ptr;
-
-
+  T* _p;
 
 public:
   /**
@@ -23,17 +21,15 @@ public:
    * @param ptr The pointer to manage.
    * @note You should avoid using this constructor directly and instead use `make_unique()`.
    */
-  unique_ptr(T* ptr) {
+  unique_ptr(T* ptr) : _p(ptr) {
     /* STUDENT TODO: Implement the constructor */
-    this->ptr = ptr;
   }
 
   /**
    * @brief Constructs a new `unique_ptr` from `nullptr`.
    */
-  unique_ptr(std::nullptr_t) {
+  unique_ptr(std::nullptr_t) : _p(nullptr) {
     /* STUDENT TODO: Implement the nullptr constructor */
-    this->ptr = nullptr;
   }
 
   /**
@@ -47,7 +43,8 @@ public:
    * @return A reference to the object.
    */
   T& operator*() {
-    return *ptr;
+    /* STUDENT TODO: Implement the dereference operator */
+    return *_p;
   }
 
   /**
@@ -56,7 +53,7 @@ public:
    */
   const T& operator*() const {
     /* STUDENT TODO: Implement the dereference operator (const) */
-    return *ptr;
+    return *_p;
   }
 
   /**
@@ -66,7 +63,7 @@ public:
    */
   T* operator->() {
     /* STUDENT TODO: Implement the arrow operator */
-    return ptr;
+    return _p;
   }
 
   /**
@@ -75,7 +72,8 @@ public:
    * @return A const pointer to the object.
    */
   const T* operator->() const {
-    return ptr;
+    /* STUDENT TODO: Implement the arrow operator */
+    return _p;
   }
 
   /**
@@ -85,10 +83,7 @@ public:
    */
   operator bool() const {
     /* STUDENT TODO: Implement the boolean conversion operator */
-    if (this->ptr != nullptr) {
-      return true;
-    }
-    return false;
+    return _p != nullptr;
   }
 
   /** STUDENT TODO: In the space below, do the following:
@@ -98,31 +93,29 @@ public:
    * - Implement the move constructor
    * - Implement the move assignment operator
    */
-
-
   ~unique_ptr() {
-    delete ptr;
-    ptr = nullptr;
+    delete _p;
+    _p = nullptr;
   }
 
-  // Delete the copy constructor
   unique_ptr(const unique_ptr&) = delete;
-
-  // Delete the copy assignment operator
   unique_ptr& operator=(const unique_ptr&) = delete;
 
-  // Implement the move constructor
-  unique_ptr(unique_ptr&& other) noexcept : ptr(other.ptr) {
-    other.ptr = nullptr;
+  unique_ptr(unique_ptr&& other) {
+    _p = other._p;
+    other._p = nullptr;
   }
 
-  // Implement the move assignment operator
-  unique_ptr& operator=(unique_ptr&& other) noexcept {
-    if (this != &other) {
-      delete ptr; // Free the existing resource
-      ptr = other.ptr;
-      other.ptr = nullptr;
+  unique_ptr& operator=(unique_ptr&& other) {
+    if (this == &other) {
+      return *this;
     }
+
+    delete _p;
+
+    _p = other._p;
+    other._p = nullptr;
+
     return *this;
   }
 };

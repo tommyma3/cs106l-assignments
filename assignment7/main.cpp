@@ -51,12 +51,15 @@ template <typename T> struct ListNode {
  * @return A `unique_ptr` to the head of the list.
  */
 template <typename T> cs106l::unique_ptr<ListNode<T>> create_list(const std::vector<T>& values) {
+  /* STUDENT TODO: Implement this method */
   cs106l::unique_ptr<ListNode<T>> head = nullptr;
+
   for (auto it = values.rbegin(); it != values.rend(); ++it) {
     auto newNode = cs106l::make_unique<ListNode<T>>(*it);
     newNode->next = std::move(head);
     head = std::move(newNode);
   }
+
   return head;
 }
 
