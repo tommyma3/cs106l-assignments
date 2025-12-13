@@ -13,8 +13,9 @@
 #include <set>
 #include <string>
 #include <unordered_set>
+#include <sstream>
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+std::string kYourName = "Tommy Ma"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -29,6 +30,19 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  */
 std::set<std::string> get_applicants(std::string filename) {
   // STUDENT TODO: Implement this function.
+
+  std::ifstream ifs(filename);
+
+  std::set<std::string> applicants;
+
+  if (ifs.is_open()) {
+    std::string name;
+    while (std::getline(ifs, name)) {
+      applicants.insert(name);
+    }
+  }
+
+  return applicants;
 }
 
 /**
@@ -41,6 +55,30 @@ std::set<std::string> get_applicants(std::string filename) {
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
   // STUDENT TODO: Implement this function.
+
+  std::queue<const std::string*> matches;
+
+  std::stringstream ss;
+
+  ss << name;
+  std::string first, last;
+  ss >> first >> last;
+
+  std::string c_f, c_l;
+
+  for (const auto& st : students) {
+
+    ss << st;
+    
+    ss >> c_f >> c_l;
+
+    if (c_f[0] == first[0] && c_l[0] == last[0]) {
+      const std::string* ptr = &st;
+      matches.push(ptr);
+    }
+  }
+
+  return matches;
 }
 
 /**
@@ -55,6 +93,12 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  */
 std::string get_match(std::queue<const std::string*>& matches) {
   // STUDENT TODO: Implement this function.
+  if (matches.empty()) {
+    return "NO MATCHES FOUND.";
+  } else {
+    const std::string* s_ptr = matches.front();
+    return *s_ptr;
+  }
 }
 
 /* #### Please don't remove this line! #### */
